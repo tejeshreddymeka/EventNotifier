@@ -13,7 +13,7 @@ import time
 	
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
-
+from modules.codeforce import Codeforce
 
 LARGE_FONT = {"Helvetica",10}
 
@@ -26,6 +26,7 @@ class Event():
 		self.event = event
 		self.epochTime = event['epochTime']
 		self.triggered = 0
+
 def openLink(event):
 		ctfUrl = event.widget.tag_names(tk.CURRENT)[1]
 		webbrowser.open_new(ctfUrl)			
@@ -78,6 +79,7 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,"\n\t>  CTFtime url: ")
 			text.insert(tk.INSERT,ctftimeUrl,('link',ctftimeUrl))
 			text.insert(tk.INSERT,"\n")
+		
 		elif eventType == "HACKEREARTH":
 			startTime =  event['start']
 			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
@@ -87,6 +89,20 @@ def popUp(triggeredEvents):
 			hackerearthUrl = event['url']
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,hackerearthUrl,('link',hackerearthUrl))
+			text.insert(tk.INSERT,"\n")
+		
+		elif eventType == "CODEFORCE":
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			duration = "\n\t>  Duration: " + event['duration']
+			text.insert(tk.INSERT,duration)
+			beforeStartTime = "\n\t>  Before start: " + event['beforeStart']
+			text.insert(tk.INSERT,beforeStartTime)
+			beforeRegTime = "\n\t>  Before registration: " + event['beforeReg']
+			text.insert(tk.INSERT,beforeRegTime)
+			codeforceUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,codeforceUrl,('link',codeforceUrl))
 			text.insert(tk.INSERT,"\n")
 
 
@@ -103,7 +119,6 @@ def popUp(triggeredEvents):
 
 	root.mainloop()
 
-
 def getEvents():
 	print('retriving events......')
 	events = []
@@ -119,6 +134,11 @@ def getEvents():
 		for hackerearthEvent in hackerearthEvents:
 			events.append( Event("HACKEREARTH",hackerearthEvent) )
 
+	if parameters['codeforce']==1:
+		codeforcEvents = Codeforce().codeforceEvents
+		for codeforcEvent in codeforcEvents:
+			events.append( Event("CODEFORCE",codeforcEvent) )
+	
 	#testing event ----
 	# currentEpoch = datetime.now().timestamp()
 	# tempEvent ={}
