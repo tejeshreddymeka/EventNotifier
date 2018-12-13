@@ -1,1 +1,0 @@
-Event Notifier with python
