@@ -7,6 +7,7 @@ from tkinter.scrolledtext import ScrolledText
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
 from modules.codeforce import Codeforce
+from modules.codechef import Codechef
 
 #---------- to hide the console window
 
@@ -40,7 +41,7 @@ class EventNotifierApp(tk.Tk):
 
 	def __init__(self):
 		tk.Tk.__init__(self)
-		tk.Tk.iconbitmap(self,default="images\\eventnotifier_icon.ico")
+		tk.Tk.iconbitmap(self,default="images\\EventNotifier.ico")
 		tk.Tk.wm_title(self,"  Event Notifier App")
 
 		container = tk.Frame(self,bg="#0d0d0d",highlightbackground="lightgreen", highlightthickness=1,width=600, height=600)
@@ -56,7 +57,7 @@ class EventNotifierApp(tk.Tk):
 		ctfButton.pack(side="top",pady=10,fill='both')
 		hackerearthButton = MyButton(sideFrame,text="   Hackerearth   ",command=lambda:self.showFrame(HackerearthPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		hackerearthButton.pack(side="top",pady=10,fill='both')
-		codechefButton = MyButton(sideFrame,text="Codechef",command=lambda:self.showFrame(StartPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
+		codechefButton = MyButton(sideFrame,text="Codechef",command=lambda:self.showFrame(CodechefPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		codechefButton.pack(side="top",pady=10,fill='both')
 		codeforceButton = MyButton(sideFrame,text="Codeforce",command=lambda:self.showFrame(CodeforcePage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		codeforceButton.pack(side="top",pady=10,fill='both')
@@ -71,6 +72,7 @@ class EventNotifierApp(tk.Tk):
 				CtfPage,
 				HackerearthPage,
 				CodeforcePage,
+				CodechefPage,
 				SettingsPage):
 			frame = F(mainFrame,self)
 			self.frames[F] = frame
@@ -151,6 +153,56 @@ class CtfPage(tk.Frame):
 	def openLink(self,event):
 		ctfUrl = event.widget.tag_names(tk.CURRENT)[1]
 		webbrowser.open_new(ctfUrl)			
+
+class CodechefPage(tk.Frame):
+
+	def __init__(self,parent,controller):
+		codechefObj = Codechef()
+		codechefEvents =  codechefObj.codechefEvents
+		tk.Frame.__init__(self,parent, highlightbackground="lightblue", highlightcolor="lightblue", highlightthickness=1, width=720, height=500, bd= 0)
+		heading = tk.Label(self,text="""
+============================================================================================
+	CODECHEF EVENTS
+============================================================================================""",
+			fg="#00e6e6",bg="#0d0d0d",font=LARGE_FONT)
+		heading.pack(expand=False,fill="both")
+		text = ScrolledText(self,font=LARGE_FONT,fg="#00ff00",bg="#1a1a1a",
+					cursor="arrow")
+		text.pack(expand=True, fill='both')
+		text.insert(tk.INSERT,"\n root",'red')
+		text.insert(tk.INSERT," @ ",'white')
+		text.insert(tk.INSERT,"Notifier")
+		text.insert(tk.INSERT," ># ",'lightblue')
+		text.insert(tk.INSERT," get codechefevents ")
+
+		for event in codechefEvents:
+			text.insert(tk.INSERT,"\n\n [+]  ",'orange')
+			name = event['title']
+			text.insert(tk.INSERT,name,'lightblue')
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			endTime = event['finish']
+			endTime = "Ends: "+endTime  + "\n\t>  "
+			description = startTime + endTime
+			text.insert(tk.INSERT,description)
+			text.insert(tk.INSERT,"Event url: ")
+			text.insert(tk.INSERT,event['url'],('link',event['url']))
+			
+		
+		text.tag_config('link',foreground="#3385ff")	
+		text.tag_bind('link','<Button-1>',self.openLink)
+		text.tag_config('lightblue',foreground="#00e6e6")
+		text.tag_config('red',foreground="red")
+		text.tag_config('white',foreground="white")
+		text.tag_config('orange',foreground="#ff6600")
+		
+		
+		text.config(state=tk.DISABLED)
+
+	def openLink(self,event):
+		eventUrl = event.widget.tag_names(tk.CURRENT)[1]
+		webbrowser.open_new(eventUrl)			
+
 	
 class HackerearthPage(tk.Frame):
 	def __init__(self,parent,controller):
@@ -340,6 +392,10 @@ class SettingsPage(tk.Frame):
 
 		saveButton = MyButton(self,text="Save",command=lambda: self.saveSettings(),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen",relief="groove",font=LARGE_FONT)
 		saveButton.pack(side="top",expand=False,ipady=2,ipadx=4)
+
+
+		self.infolabel = tk.Label(self,text="",bg="#333333",relief="groove",font=LARGE_FONT)
+		
 		
 	def saveSettings(self):
 		parameters = {}
@@ -350,8 +406,12 @@ class SettingsPage(tk.Frame):
 		parameters['codeforce'] = self.codeforceCheck.get()
 		try:
 			parameters['beforeEventNotifyInterval'] = int(self.beforeIntervaltext.get('1.0','end-1c').strip())
+			self.infolabel['text'] = "Settings have been saved!	"
+			self.infolabel['foreground'] = '#00e6e6'
+			self.infolabel.pack(side="top",expand=False,ipady=2,ipadx=4,pady=40)
 		except:
-			pass
+			self.infolabel['text'] = "Invalid values were entered !	"
+			self.infolabel['foreground'] = 'red'
 			return
 		self.saveParameters(parameters)
 
@@ -391,12 +451,10 @@ if __name__=="__main__":
 	
 	#---------- to hide the console window
 
-	# The_program_to_hide = win32gui.GetForegroundWindow()
-	# win32gui.ShowWindow(The_program_to_hide , win32con.SW_HIDE)
+	The_program_to_hide = win32gui.GetForegroundWindow()
+	win32gui.ShowWindow(The_program_to_hide , win32con.SW_HIDE)
 
 	#-------------
 
 	app.mainloop()
-
-
 	

@@ -42,7 +42,7 @@ class Codeforce:
 		from_fmt = "%b/%d/%Y %H:%M"
 		curTime = datetime.strptime(rawTime,from_fmt)
 		epochTime = curTime.timestamp()
-		verfTime = time.strftime(from_fmt,time.localtime(epochTime))
+		#verfTime = time.strftime(from_fmt,time.localtime(epochTime))
 		return epochTime
 
 

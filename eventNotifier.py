@@ -3,6 +3,10 @@ from tkinter.scrolledtext import ScrolledText
 import webbrowser
 from datetime import datetime
 import time
+
+
+print("Starting Event Notifier .............")
+
 #---------- to hide the console window
 
 # import win32gui, win32con
@@ -14,6 +18,7 @@ import time
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
 from modules.codeforce import Codeforce
+from modules.codechef import Codechef
 
 LARGE_FONT = {"Helvetica",10}
 
@@ -33,7 +38,7 @@ def openLink(event):
 
 def popUp(triggeredEvents):
 	root = tk.Tk()
-	tk.Tk.iconbitmap(root,default="images\\eventnotifier_icon.ico")
+	tk.Tk.iconbitmap(root,default="images\\EventNotifier.ico")
 	tk.Tk.wm_title(root,"  Event Notifier App")
 
 	container = tk.Frame(root,bg="#1a1a1a",highlightbackground="lightblue", highlightthickness=1)
@@ -90,10 +95,23 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,hackerearthUrl,('link',hackerearthUrl))
 			text.insert(tk.INSERT,"\n")
-		
+
+		elif eventType == "CODECHEF":
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			text.insert(tk.INSERT,startTime)
+			endTime = event['finish']
+			endTime = "Ends: "+ endTime  + "\n\t>  "
+			text.insert(tk.INSERT,endTime)
+			codechefUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,codechefUrl,('link',codechefUrl))
+			text.insert(tk.INSERT,"\n")
+
 		elif eventType == "CODEFORCE":
 			startTime =  event['start']
 			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			text.insert(tk.INSERT,startTime)
 			duration = "\n\t>  Duration: " + event['duration']
 			text.insert(tk.INSERT,duration)
 			beforeStartTime = "\n\t>  Before start: " + event['beforeStart']
@@ -134,10 +152,15 @@ def getEvents():
 		for hackerearthEvent in hackerearthEvents:
 			events.append( Event("HACKEREARTH",hackerearthEvent) )
 
+	if parameters['codechef']==1:
+		codechefEvents = Codechef().codechefEvents
+		for codechefEvent in codechefEvents:
+			events.append( Event("CODECHEF",codechefEvent) )
+
 	if parameters['codeforce']==1:
-		codeforcEvents = Codeforce().codeforceEvents
-		for codeforcEvent in codeforcEvents:
-			events.append( Event("CODEFORCE",codeforcEvent) )
+		codeforceEvents = Codeforce().codeforceEvents
+		for codeforceEvent in codeforceEvents:
+			events.append( Event("CODEFORCE",codeforceEvent) )
 	
 	#testing event ----
 	# currentEpoch = datetime.now().timestamp()
@@ -149,6 +172,11 @@ def getEvents():
 	# events.append(temp)
 	#-----------------	
 	events.sort(key=lambda event: int(event.epochTime) )
+	for event in events:
+		from_fmt = "%Y-%m-%d %H:%M"
+		verfTime = time.strftime(from_fmt,time.localtime(event.epochTime))
+		print(verfTime)
+		print(event.epochTime,event.eventType)
 	return events
 
 
@@ -158,7 +186,7 @@ def getParameters():
 		parameters['beforeEventNotifyInterval'] = int(fp.read())  #seconds
 	parameters['sleepInterval'] = 5*60
 	parameters['retriveInterval'] = 15*60
-	parameters['delta'] = 1
+	parameters['delta'] = 2
 
 	with open("config/notificationSettings.conf",'r') as fp: 
 		parameters['ctftime'] = int(fp.readline().strip())
@@ -190,19 +218,23 @@ if __name__=="__main__":
 		if currentEpoch - prevRetrival > retriveInterval:
 			events = getEvents()
 			prevRetrival = currentEpoch
-
+		currentEpoch = int(datetime.now().timestamp())
 		numEvents = len(events)
 		if numEvents > 0:
 			minEvent = events[0]
 			minEpoch = minEvent.epochTime
 			diff = int(minEvent.epochTime) - currentEpoch
+			print(minEvent.eventType)
+			print(diff)
 			if diff < 0:
 				while(len(events)!=0 and (int(events[0].epochTime ) == int(minEpoch))):
 					events.pop(0)
 			numEvents = len(events)
 			if numEvents > 0:
 				minEvent = events[0]
+				
 				diff = int(minEvent.epochTime) - currentEpoch
+				print('diff2',diff)
 				if (diff >= -delta and diff <= delta) or diff<=0:
 					events[0].triggered+=1
 					triggeredEvents.append(minEvent)
@@ -224,13 +256,14 @@ if __name__=="__main__":
 							break
 					popUp(triggeredEvents)
 					diff = int(minEvent.epochTime) - currentEpoch
-					print('sleeping for diff {} time.... deep in'.format(diff))
 					if diff >0:
+						print('sleeping for diff {} time.... deep in'.format(diff))
 						time.sleep(diff)
 				else:
 					if diff < sleepInterval:
-						print('sleeping for diff  {} time......shallow in'.format(diff))
+						
 						if diff > 0:
+							print('sleeping for diff  {} time......shallow in'.format(diff))
 							time.sleep(abs(diff))
 					else:
 						print('sleeping for sleepInterval ie {}.....In'.format(sleepInterval))
