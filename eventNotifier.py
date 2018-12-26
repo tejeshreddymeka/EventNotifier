@@ -7,16 +7,10 @@ import time
 
 print("Starting Event Notifier .............")
 
-#---------- to hide the console window
-
-# import win32gui, win32con
-# The_program_to_hide = win32gui.GetForegroundWindow()
-# win32gui.ShowWindow(The_program_to_hide , win32con.SW_HIDE)
-
-#-------------
 	
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
+from modules.hackerrank import Hackerrank
 from modules.codeforce import Codeforce
 from modules.codechef import Codechef
 
@@ -96,6 +90,17 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,hackerearthUrl,('link',hackerearthUrl))
 			text.insert(tk.INSERT,"\n")
 
+		elif eventType == "HACKERRANK":
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			description = startTime
+			text.insert(tk.INSERT,description)
+			hackerrankUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,hackerrankUrl,('link',hackerrankUrl))
+			text.insert(tk.INSERT,"\n")
+
+
 		elif eventType == "CODECHEF":
 			startTime =  event['start']
 			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
@@ -152,6 +157,11 @@ def getEvents():
 		for hackerearthEvent in hackerearthEvents:
 			events.append( Event("HACKEREARTH",hackerearthEvent) )
 
+	if parameters['hackerrank']==1:
+		hackerrankEvents = Hackerrank().hackerrankEvents
+		for hackerrankEvent in hackerrankEvents:
+			events.append( Event("HACKERRANK",hackerrankEvent) )
+
 	if parameters['codechef']==1:
 		codechefEvents = Codechef().codechefEvents
 		for codechefEvent in codechefEvents:
@@ -172,11 +182,11 @@ def getEvents():
 	# events.append(temp)
 	#-----------------	
 	events.sort(key=lambda event: int(event.epochTime) )
-	for event in events:
-		from_fmt = "%Y-%m-%d %H:%M"
-		verfTime = time.strftime(from_fmt,time.localtime(event.epochTime))
-		print(verfTime)
-		print(event.epochTime,event.eventType)
+	# for event in events:
+	# 	from_fmt = "%Y-%m-%d %H:%M"
+	# 	verfTime = time.strftime(from_fmt,time.localtime(event.epochTime))
+	# 	print(verfTime)
+	# 	print(event.epochTime,event.eventType)
 	return events
 
 
@@ -215,65 +225,54 @@ if __name__=="__main__":
 		delta = parameters['delta']
 
 		currentEpoch = int(datetime.now().timestamp())
-		if currentEpoch - prevRetrival > retriveInterval:
+		if currentEpoch - prevRetrival >= retriveInterval:
 			events = getEvents()
+			currentEpoch = int(datetime.now().timestamp())
 			prevRetrival = currentEpoch
-		currentEpoch = int(datetime.now().timestamp())
+
 		numEvents = len(events)
+		
 		if numEvents > 0:
-			minEvent = events[0]
-			minEpoch = minEvent.epochTime
-			diff = int(minEvent.epochTime) - currentEpoch
-			print(minEvent.eventType)
-			print(diff)
-			if diff < 0:
-				while(len(events)!=0 and (int(events[0].epochTime ) == int(minEpoch))):
-					events.pop(0)
-			numEvents = len(events)
-			if numEvents > 0:
-				minEvent = events[0]
-				
-				diff = int(minEvent.epochTime) - currentEpoch
-				print('diff2',diff)
-				if (diff >= -delta and diff <= delta) or diff<=0:
-					events[0].triggered+=1
-					triggeredEvents.append(minEvent)
-					for ind in range(1,numEvents):
-						if int(events[ind].epochTime) == int(minEvent.epochTime):
-							events[0].triggered+=1
-							triggeredEvents.append(events[ind])
-						else:	
-							break
-					popUp(triggeredEvents)
-				elif diff <= beforeEventNotifyInterval:
-					events[0].triggered+=1
-					triggeredEvents.append(minEvent)
-					for ind in range(1,numEvents):
-						if int(events[ind].epochTime) == int(minEvent.epochTime):	
-							events[0].triggered+=1
-							triggeredEvents.append(events[ind])
-						else:	
-							break
-					popUp(triggeredEvents)
-					diff = int(minEvent.epochTime) - currentEpoch
-					if diff >0:
-						print('sleeping for diff {} time.... deep in'.format(diff))
-						time.sleep(diff)
-				else:
-					if diff < sleepInterval:
-						
-						if diff > 0:
-							print('sleeping for diff  {} time......shallow in'.format(diff))
-							time.sleep(abs(diff))
-					else:
-						print('sleeping for sleepInterval ie {}.....In'.format(sleepInterval))
-						time.sleep(sleepInterval)
-			else:
-				print('sleeping for sleepInterval..ie, {}...OutIn'.format(sleepInterval))
-				time.sleep(sleepInterval)
+			eventInd = 0
+			while(events[eventInd].epochTime <= currentEpoch):
+				if(events[eventInd].triggered<=1):				
+					triggeredEvents.append(events[eventInd])
+					events[eventInd].triggered+=1	
 			
+				eventInd+=1
+			
+			checkInd = eventInd
+
+			while(events[eventInd].epochTime <= currentEpoch + beforeEventNotifyInterval):
+				if(events[eventInd].triggered==0):				
+					triggeredEvents.append(events[eventInd])
+					events[eventInd].triggered+=1	
+			
+				eventInd+=1
+			currentEpoch = int(datetime.now().timestamp())
+
+			
+			while(events[eventInd].epochTime >= currentEpoch - delta and events[eventInd].epochTime <= currentEpoch+ delta):
+				triggeredEvents.append(events[eventInd])
+				events[eventInd].triggered+=1	
+				eventInd+=1	
+
+			if(len(triggeredEvents)!=0):
+				popUp(triggeredEvents)
+			if(checkInd<numEvents):
+				sInterval = events[checkInd].epochTime - currentEpoch - beforeEventNotifyInterval
+				if(sInterval < 0):
+					sInterval = events[checkInd].epochTime - currentEpoch
+					if(sInterval < 0):
+						sInterval = sleepInterval
+			else:
+				sInterval = sleepInterval
+			if sInterval > retriveInterval:
+				sInterval = retriveInterval
+			print('sleeping for {}....In'.format(sInterval))
+			time.sleep(sInterval)
 		else:
-			print('sleeping for sleepInterval.ie,{}....Out'.format(sleepInterval))
+			print('sleeping for {}....Out'.format(sleepInterval))
 			time.sleep(sleepInterval)
 			
 	

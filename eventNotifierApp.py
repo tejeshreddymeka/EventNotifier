@@ -2,10 +2,14 @@ import tkinter as tk
 from tkinter import ttk 
 import webbrowser
 from tkinter.scrolledtext import ScrolledText
+import threading
+import time
+import os
 
 
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
+from modules.hackerrank import Hackerrank
 from modules.codeforce import Codeforce
 from modules.codechef import Codechef
 
@@ -61,7 +65,7 @@ class EventNotifierApp(tk.Tk):
 		codechefButton.pack(side="top",pady=10,fill='both')
 		codeforceButton = MyButton(sideFrame,text="Codeforce",command=lambda:self.showFrame(CodeforcePage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		codeforceButton.pack(side="top",pady=10,fill='both')
-		hackerrankButton = MyButton(sideFrame,text="Hackerrank",command=lambda:self.showFrame(StartPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
+		hackerrankButton = MyButton(sideFrame,text="Hackerrank",command=lambda:self.showFrame(HackerrankPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		hackerrankButton.pack(side="top",pady=10,fill='both')
 		settingsButton = MyButton(sideFrame,text="Settings",command=lambda:self.showFrame(SettingsPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		settingsButton.pack(side="top",pady=10,fill='both')
@@ -71,6 +75,7 @@ class EventNotifierApp(tk.Tk):
 		for F in (StartPage,
 				CtfPage,
 				HackerearthPage,
+				HackerrankPage,
 				CodeforcePage,
 				CodechefPage,
 				SettingsPage):
@@ -251,6 +256,53 @@ class HackerearthPage(tk.Frame):
 	def openLink(self,event):
 		hackerearthUrl = event.widget.tag_names(tk.CURRENT)[1]
 		webbrowser.open_new(hackerearthUrl)			
+
+class HackerrankPage(tk.Frame):
+	def __init__(self,parent,controller):
+		hackerrankObj = Hackerrank()
+		hackerrankEvents =  hackerrankObj.hackerrankEvents
+		tk.Frame.__init__(self,parent, highlightbackground="lightblue", highlightcolor="lightblue", highlightthickness=1, width=720, height=500, bd= 0)
+		heading = tk.Label(self,text="""
+============================================================================================
+	HACKERRANK EVENTS
+============================================================================================""",
+			fg="#00e6e6",bg="#0d0d0d",font=LARGE_FONT)
+		heading.pack(expand=False,fill="both")
+		text = ScrolledText(self,font=LARGE_FONT,fg="#00ff00",bg="#1a1a1a",
+					cursor="arrow")
+		text.pack(expand=True, fill='both')
+		text.insert(tk.INSERT,"\n root",'red')
+		text.insert(tk.INSERT," @ ",'white')
+		text.insert(tk.INSERT,"Notifier")
+		text.insert(tk.INSERT," ># ",'lightblue')
+		text.insert(tk.INSERT," get hackerrankevents ")
+
+		for event in hackerrankEvents:
+			text.insert(tk.INSERT,"\n\n [+]  ",'orange')
+			name = event['title']
+			text.insert(tk.INSERT,name,'lightblue')
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime
+			description = startTime
+			text.insert(tk.INSERT,description)
+			hackerrankUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,hackerrankUrl,('link',hackerrankUrl))
+			text.insert(tk.INSERT,"\n")
+		
+		text.tag_config('link',foreground="#3385ff")	
+		text.tag_bind('link','<Button-1>',self.openLink)
+		text.tag_config('lightblue',foreground="#00e6e6")
+		text.tag_config('red',foreground="red")
+		text.tag_config('white',foreground="white")
+		text.tag_config('orange',foreground="#ff6600")
+		
+		
+		text.config(state=tk.DISABLED)
+
+	def openLink(self,event):
+		hackerrankUrl = event.widget.tag_names(tk.CURRENT)[1]
+		webbrowser.open_new(hackerrankUrl)			
 
 
 class CodeforcePage(tk.Frame):
@@ -440,21 +492,58 @@ class SettingsPage(tk.Frame):
 			parameters['codeforce'] = int(fp.readline().strip())
 		return parameters
 
+def showAnimation():
+
+	logo = r"""
+                 ____
+                /  __|         _____           _
+                | |_  __    __|  _  | /\____  | |_
+                |  _| \ \  / /| |/_/  \  _  \ |  _|
+                | |__  \ \/ / | |___  | | | | | |__
+                |____|  \__/  |_____| |_| |_| |____|
+     ____  _       _     _  ____  _  _____ __   __
+    |    || | ___ | |_  |_||  __||_||  _  |\ \./ /
+    | /\ || || _ ||  _|  _ | |_   _ | |/_/  \ | /
+    | || \/ |||_||| |__ | ||  _| | || |___  / | \
+    |_||____||___||____||_||_|   |_||_____||_____|
+
+	"""
 
 
-	
+	colors = ['0b','02','03','0b','04','06','09','0a','0b','0c','0d','0e']
+	curColor =  0
+	for ind in range(len(logo)):
+		if logo[ind]=='\n':
+			os.system("color "+str(colors[curColor%len(colors)]))
+			curColor+=1
+		print(logo[ind],end="")
+		time.sleep(0.007)
+	time.sleep(1)
+	os.system('color 0d')
+	print("                          ---> By  TEJESHREDDY MEKA.")
+	time.sleep(1)
+	os.system('color 06')
+	print('\n\n\t[+] Launching Event Notifier Application.....')
+	time.sleep(1)
+	os.system('color 0a')
+	print('\n\t[+] Retriving data from websites......')
+	time.sleep(1)
+	os.system('color 0d')
+	print("\n\t[+] We will remind you if any competetion  starts.")
+	time.sleep(1)
+	os.system('color 0e')
+	print('\n\t[+] Have a Nice day.............')
+	os.system('color 0b')
+
+
+
 if __name__=="__main__":
-	print("\nLaunching EventNotifierApp.........")
-	print("\nRetriving data from websites...............")
+	
 
+	thread = threading.Thread(target=showAnimation)
+	thread.start()
+
+	
 	app = EventNotifierApp()
-	
-	#---------- to hide the console window
-
-	The_program_to_hide = win32gui.GetForegroundWindow()
-	win32gui.ShowWindow(The_program_to_hide , win32con.SW_HIDE)
-
-	#-------------
-
 	app.mainloop()
-	
+	thread.join()
