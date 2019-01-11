@@ -12,13 +12,7 @@ from modules.hackerearth import Hackerearth
 from modules.hackerrank import Hackerrank
 from modules.codeforce import Codeforce
 from modules.codechef import Codechef
-
-#---------- to hide the console window
-
-import win32gui, win32con
-
-#-------------
-
+from modules.leetcode import Leetcode
 
 
 LARGE_FONT = {"Helvetica",10}
@@ -65,6 +59,8 @@ class EventNotifierApp(tk.Tk):
 		codechefButton.pack(side="top",pady=10,fill='both')
 		codeforceButton = MyButton(sideFrame,text="Codeforce",command=lambda:self.showFrame(CodeforcePage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		codeforceButton.pack(side="top",pady=10,fill='both')
+		leetcodeButton = MyButton(sideFrame,text="Leetcode",command=lambda:self.showFrame(LeetcodePage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
+		leetcodeButton.pack(side="top",pady=10,fill='both')
 		hackerrankButton = MyButton(sideFrame,text="Hackerrank",command=lambda:self.showFrame(HackerrankPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		hackerrankButton.pack(side="top",pady=10,fill='both')
 		settingsButton = MyButton(sideFrame,text="Settings",command=lambda:self.showFrame(SettingsPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
@@ -78,6 +74,7 @@ class EventNotifierApp(tk.Tk):
 				HackerrankPage,
 				CodeforcePage,
 				CodechefPage,
+				LeetcodePage,
 				SettingsPage):
 			frame = F(mainFrame,self)
 			self.frames[F] = frame
@@ -441,6 +438,16 @@ class SettingsPage(tk.Frame):
 		hackerrankLabel = tk.Label(hackerrankFrame,text=" Hackerrank",bg="#1a1a1a",fg="#00e6e6",font=LARGE_FONT)
 		hackerrankLabel.pack(side="left",padx=5)
 
+		leetcodeFrame = tk.Frame(container,bg="#1a1a1a")
+		leetcodeFrame.pack(side="top",fill="both")
+		self.leetcodeCheck = tk.IntVar()
+		self.leetcodeBox = tk.Checkbutton(leetcodeFrame,bg="#1a1a1a",variable=self.leetcodeCheck)
+		self.leetcodeBox.pack(side="left")
+		if parameters['leetcode']==1:
+			self.leetcodeBox.select()
+		leetcodeLabel = tk.Label(leetcodeFrame,text=" Leetcode",bg="#1a1a1a",fg="#00e6e6",font=LARGE_FONT)
+		leetcodeLabel.pack(side="left",padx=5)
+
 
 		saveButton = MyButton(self,text="Save",command=lambda: self.saveSettings(),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen",relief="groove",font=LARGE_FONT)
 		saveButton.pack(side="top",expand=False,ipady=2,ipadx=4)
@@ -456,6 +463,7 @@ class SettingsPage(tk.Frame):
 		parameters['hackerrank'] = self.hackerrankCheck.get()
 		parameters['codechef'] = self.codechefCheck.get()
 		parameters['codeforce'] = self.codeforceCheck.get()
+		parameters['leetcode'] = self.leetcodeCheck.get()
 		try:
 			parameters['beforeEventNotifyInterval'] = int(self.beforeIntervaltext.get('1.0','end-1c').strip())
 			self.infolabel['text'] = "Settings have been saved!	"
@@ -478,6 +486,7 @@ class SettingsPage(tk.Frame):
 			fp.write(str(parameters['hackerrank'])+"\n")
 			fp.write(str(parameters['codechef'])+"\n")
 			fp.write(str(parameters['codeforce'])+"\n")
+			fp.write(str(parameters['leetcode'])+"\n")
 
 		
 	def getParameters(self):
@@ -490,6 +499,7 @@ class SettingsPage(tk.Frame):
 			parameters['hackerrank'] = int(fp.readline().strip())
 			parameters['codechef'] = int(fp.readline().strip())
 			parameters['codeforce'] = int(fp.readline().strip())
+			parameters['leetcode'] = int(fp.readline().strip())
 		return parameters
 
 def showAnimation():
@@ -535,6 +545,53 @@ def showAnimation():
 	print('\n\t[+] Have a Nice day.............')
 	os.system('color 0b')
 
+class LeetcodePage(tk.Frame):
+	def __init__(self,parent,controller):
+		leetcodeObj = Leetcode()
+		leetcodeEvents =  leetcodeObj.leetcodeEvents
+		tk.Frame.__init__(self,parent, highlightbackground="lightblue", highlightcolor="lightblue", highlightthickness=1, width=720, height=500, bd= 0)
+		heading = tk.Label(self,text="""
+============================================================================================
+	LEETCODE EVENTS
+============================================================================================""",
+			fg="#00e6e6",bg="#0d0d0d",font=LARGE_FONT)
+		heading.pack(expand=False,fill="both")
+		text = ScrolledText(self,font=LARGE_FONT,fg="#00ff00",bg="#1a1a1a",
+					cursor="arrow")
+		text.pack(expand=True, fill='both')
+		text.insert(tk.INSERT,"\n root",'red')
+		text.insert(tk.INSERT," @ ",'white')
+		text.insert(tk.INSERT,"Notifier")
+		text.insert(tk.INSERT," ># ",'lightblue')
+		text.insert(tk.INSERT," get leetcodeEvents ")
+
+		for event in leetcodeEvents:
+			text.insert(tk.INSERT,"\n\n [+]  ",'orange')
+			name = event['title']
+			text.insert(tk.INSERT,name,'lightblue')
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime
+			endTime = "\n\t>  " + "Finish: " + event['finish'] 
+			description = startTime + endTime + "\n\t>  "
+			text.insert(tk.INSERT,description)
+			leetcodeUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,leetcodeUrl,('link',leetcodeUrl))
+			text.insert(tk.INSERT,"\n")
+		
+		text.tag_config('link',foreground="#3385ff")	
+		text.tag_bind('link','<Button-1>',self.openLink)
+		text.tag_config('lightblue',foreground="#00e6e6")
+		text.tag_config('red',foreground="red")
+		text.tag_config('white',foreground="white")
+		text.tag_config('orange',foreground="#ff6600")
+		
+		
+		text.config(state=tk.DISABLED)
+
+	def openLink(self,event):
+		leetcodeUrl = event.widget.tag_names(tk.CURRENT)[1]
+		webbrowser.open_new(leetcodeUrl)			
 
 
 if __name__=="__main__":

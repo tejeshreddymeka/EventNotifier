@@ -79,7 +79,7 @@ class ctftime:
 			else:
 				events = self.readCtfFile()
 		except:
-				events = self.readCtfFile()
+			events = self.readCtfFile()
 		self.ctfEvents = events
 
 if __name__=="__main__":

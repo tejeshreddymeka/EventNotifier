@@ -13,6 +13,7 @@ from modules.hackerearth import Hackerearth
 from modules.hackerrank import Hackerrank
 from modules.codeforce import Codeforce
 from modules.codechef import Codechef
+from modules.leetcode import Leetcode
 
 LARGE_FONT = {"Helvetica",10}
 
@@ -128,6 +129,18 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,codeforceUrl,('link',codeforceUrl))
 			text.insert(tk.INSERT,"\n")
 
+		elif eventType == "LEETCODE":
+			startTime =  event['start']
+			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
+			text.insert(tk.INSERT,startTime)
+			endTime = event['finish']
+			endTime = "Ends: "+ endTime  + "\n\t>  "
+			text.insert(tk.INSERT,endTime)
+			codechefUrl = event['url']
+			text.insert(tk.INSERT,"\n\t>  Event url: ")
+			text.insert(tk.INSERT,codechefUrl,('link',codechefUrl))
+			text.insert(tk.INSERT,"\n")
+
 
 	text.tag_config('link',foreground="#3385ff")	
 	text.tag_bind('link','<Button-1>',openLink)
@@ -172,6 +185,11 @@ def getEvents():
 		for codeforceEvent in codeforceEvents:
 			events.append( Event("CODEFORCE",codeforceEvent) )
 	
+	if parameters['leetcode']==1:
+		leetcodeEvents = Leetcode().leetcodeEvents
+		for leetcodeEvent in leetcodeEvents:
+			events.append( Event("LEETCODE",codeforceEvent) )
+	
 	#testing event ----
 	# currentEpoch = datetime.now().timestamp()
 	# tempEvent ={}
@@ -196,7 +214,7 @@ def getParameters():
 		parameters['beforeEventNotifyInterval'] = int(fp.read())  #seconds
 	parameters['sleepInterval'] = 5*60
 	parameters['retriveInterval'] = 15*60
-	parameters['delta'] = 2
+	parameters['delta'] = 1*60
 
 	with open("config/notificationSettings.conf",'r') as fp: 
 		parameters['ctftime'] = int(fp.readline().strip())
@@ -204,7 +222,7 @@ def getParameters():
 		parameters['hackerrank'] = int(fp.readline().strip())
 		parameters['codechef'] = int(fp.readline().strip())
 		parameters['codeforce'] = int(fp.readline().strip())
-	
+		parameters['leetcode'] = int(fp.readline().strip())
 	return parameters
 
 if __name__=="__main__":
