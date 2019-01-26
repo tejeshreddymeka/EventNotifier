@@ -2,8 +2,6 @@ from requests import Session
 import requests
 import json
 from bs4 import BeautifulSoup
-import warnings
-warnings.filterwarnings("ignore",module="bs4")
 import time
 
 class Leetcode:

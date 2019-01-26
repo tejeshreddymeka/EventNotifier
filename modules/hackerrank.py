@@ -5,8 +5,6 @@ from pytz import timezone
 from datetime import datetime
 from dateutil import tz
 import time
-import warnings
-warnings.filterwarnings("ignore",module="bs4")
 
 
 class Hackerrank:

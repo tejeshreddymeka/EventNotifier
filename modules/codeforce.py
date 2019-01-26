@@ -5,8 +5,6 @@ from pytz import timezone
 from datetime import datetime
 from dateutil import tz
 import time
-import warnings
-warnings.filterwarnings("ignore",module="bs4")
 
 
 class Codeforce:
@@ -56,7 +54,7 @@ class Codeforce:
 			self.codeforceEvents = []
 			if req.status_code == 200:
 				data = req.text
-				html = BeautifulSoup(data)
+				html = BeautifulSoup(data,features="html.parser")
 				tables = html.findAll('div',attrs={'class':'datatable'})
 				upcomingTable = tables[0].findAll('table')
 				rows = upcomingTable[0].findAll('tr')

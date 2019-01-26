@@ -6,8 +6,6 @@ import time
 import webbrowser
 from datetime import datetime
 
-import warnings
-warnings.filterwarnings("ignore",category=UserWarning,module='bs4')
 
 
 class Hackerearth():
@@ -108,7 +106,7 @@ class Hackerearth():
 		# 		data = json.load(fp)
 		#-----------------
 		data = data['data']
-		html = BeautifulSoup(data)
+		html = BeautifulSoup(data,features="html.parser")
 		baseUrl = "https://hackerearth.com"
 
 		upcomingChallenges = []

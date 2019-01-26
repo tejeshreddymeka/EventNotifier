@@ -5,8 +5,6 @@ from pytz import timezone
 from datetime import datetime
 from dateutil import tz
 import time
-import warnings
-warnings.filterwarnings("ignore",module="bs4")
 
 
 class Codechef:
@@ -48,7 +46,7 @@ class Codechef:
 			self.codechefEvents = []
 			if req.status_code == 200:
 				data = req.text
-				html = BeautifulSoup(data)
+				html = BeautifulSoup(data,features="html.parser")
 				header = html.findAll('h3',text="Future Contests")
 				if header!=None:
 					div = header[0].next_sibling.next_sibling
