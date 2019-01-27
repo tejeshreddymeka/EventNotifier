@@ -3,15 +3,15 @@
 * Are you unable to remember ctf events or any other events or coding competitions?
 * Here is solution.
 * You need not set any event.
-* The events from website [ctftime.org, hackerrank.com , hackerearth.com , codeforces.com , codechef.com  will automatically be added.
+* The events from website [ctftime.org, hackerrank.com , hackerearth.com , codeforces.com , codechef.com , leetcode.com will automatically be added.
 * Here is the python tool that will notify you frequently between 5 minutes before and after the event starts by default or you can even change the time.
 
 * This Application is tested on windows OS and written in python3.
 
 ### Requirements:-
   * windows os
-  * python-2.x  
-> You can install python-2.x from https://www.python.org/downloads/windows/ 
+  * python-3.x  
+> You can install python-3.x from https://www.python.org/downloads/windows/ 
   * python modules:
       - requests
       - beautifulsoup4
