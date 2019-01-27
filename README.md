@@ -4,7 +4,7 @@
 * Here is solution.
 * You need not set any event.
 * The events from website [ctftime.org, hackerrank.com , hackerearth.com , codeforces.com , codechef.com  will automatically be added.
-* Here is the python tool that will notify you 5 minutes before the event by default or you can even change the time.
+* Here is the python tool that will notify you frequently between 5 minutes before and after the event starts by default or you can even change the time.
 
 * This Application is tested on windows OS and written in python3.
 
@@ -41,3 +41,6 @@ You can click on the links to open the webpage in browser.
 
 ### Notification Screenshot
 ![notificationpic](https://github.com/tejeshreddymeka/EventNotifier/blob/master/images/Screenshot%20(19).png)
+
+##NOTE:-
+* This Application works only when your computer is on.
