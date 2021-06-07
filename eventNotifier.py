@@ -1,4 +1,4 @@
-import tkinter as tk 
+import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 import webbrowser
 from datetime import datetime
@@ -7,7 +7,7 @@ import time
 
 print("Starting Event Notifier .............")
 
-	
+
 from modules.ctftime import ctftime
 from modules.hackerearth import Hackerearth
 from modules.hackerrank import Hackerrank
@@ -29,11 +29,11 @@ class Event():
 
 def openLink(event):
 		ctfUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(ctfUrl)			
+		webbrowser.open_new(ctfUrl)
 
 def popUp(triggeredEvents):
 	root = tk.Tk()
-	tk.Tk.iconbitmap(root,default="images\\EventNotifier.ico")
+	# tk.Tk.iconbitmap(root,default="images\\EventNotifier.ico")
 	tk.Tk.wm_title(root,"  Event Notifier App")
 
 	container = tk.Frame(root,bg="#1a1a1a",highlightbackground="lightblue", highlightthickness=1)
@@ -79,7 +79,7 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,"\n\t>  CTFtime url: ")
 			text.insert(tk.INSERT,ctftimeUrl,('link',ctftimeUrl))
 			text.insert(tk.INSERT,"\n")
-		
+
 		elif eventType == "HACKEREARTH":
 			startTime =  event['start']
 			startTime = "\n\t>  " + "Starts: "+ startTime + "\n\t>  "
@@ -142,7 +142,7 @@ def popUp(triggeredEvents):
 			text.insert(tk.INSERT,"\n")
 
 
-	text.tag_config('link',foreground="#3385ff")	
+	text.tag_config('link',foreground="#3385ff")
 	text.tag_bind('link','<Button-1>',openLink)
 	text.tag_config('lightblue',foreground="#00e6e6")
 	text.tag_config('red',foreground="red")
@@ -150,7 +150,7 @@ def popUp(triggeredEvents):
 	text.tag_config('orange',foreground="#ff6600")
 	text.tag_config('blue',foreground="#3385ff")
 	text.tag_config('pink',foreground="#ff4dd2")
-	text.config(state=tk.DISABLED)	
+	text.config(state=tk.DISABLED)
 
 
 	root.mainloop()
@@ -158,7 +158,7 @@ def popUp(triggeredEvents):
 def getEvents():
 	print('retriving events......')
 	events = []
-	
+
 	parameters = getParameters()
 	if parameters['ctftime']==1:
 		ctfEvents = ctftime().ctfEvents
@@ -184,21 +184,21 @@ def getEvents():
 		codeforceEvents = Codeforce().codeforceEvents
 		for codeforceEvent in codeforceEvents:
 			events.append( Event("CODEFORCE",codeforceEvent) )
-	
+
 	if parameters['leetcode']==1:
 		leetcodeEvents = Leetcode().leetcodeEvents
 		for leetcodeEvent in leetcodeEvents:
 			events.append( Event("LEETCODE",codeforceEvent) )
-	
+
 	#testing event ----
 	# currentEpoch = datetime.now().timestamp()
 	# tempEvent ={}
 	# tempEvent['epochTime'] = str( int(currentEpoch) + 2*60)
 	# tempEvent['title'] = "testing"
 	# temp = Event("None",tempEvent)
-	
+
 	# events.append(temp)
-	#-----------------	
+	#-----------------
 	events.sort(key=lambda event: int(event.epochTime) )
 	# for event in events:
 	# 	from_fmt = "%Y-%m-%d %H:%M"
@@ -216,7 +216,7 @@ def getParameters():
 	parameters['retriveInterval'] = 15*60
 	parameters['delta'] = 1*60
 
-	with open("config/notificationSettings.conf",'r') as fp: 
+	with open("config/notificationSettings.conf",'r') as fp:
 		parameters['ctftime'] = int(fp.readline().strip())
 		parameters['hackerearth'] = int(fp.readline().strip())
 		parameters['hackerrank'] = int(fp.readline().strip())
@@ -226,15 +226,15 @@ def getParameters():
 	return parameters
 
 if __name__=="__main__":
-	
-	events = getEvents()	
+
+	events = getEvents()
 	triggeredEvents = []
 	currentEpoch = int(datetime.now().timestamp())
-	
+
 
 	prevRetrival = currentEpoch
 
-	while(True):	
+	while(True):
 		triggeredEvents = []
 		parameters = getParameters()
 		beforeEventNotifyInterval = parameters['beforeEventNotifyInterval']
@@ -249,31 +249,31 @@ if __name__=="__main__":
 			prevRetrival = currentEpoch
 
 		numEvents = len(events)
-		
+
 		if numEvents > 0:
 			eventInd = 0
 			while(events[eventInd].epochTime <= currentEpoch):
-				if(events[eventInd].triggered<=1):				
+				if(events[eventInd].triggered<=1):
 					triggeredEvents.append(events[eventInd])
-					events[eventInd].triggered+=1	
-			
+					events[eventInd].triggered+=1
+
 				eventInd+=1
-			
+
 			checkInd = eventInd
 
 			while(events[eventInd].epochTime <= currentEpoch + beforeEventNotifyInterval):
-				if(events[eventInd].triggered==0):				
+				if(events[eventInd].triggered==0):
 					triggeredEvents.append(events[eventInd])
-					events[eventInd].triggered+=1	
-			
+					events[eventInd].triggered+=1
+
 				eventInd+=1
 			currentEpoch = int(datetime.now().timestamp())
 
-			
+
 			while(events[eventInd].epochTime >= currentEpoch - delta and events[eventInd].epochTime <= currentEpoch+ delta):
 				triggeredEvents.append(events[eventInd])
-				events[eventInd].triggered+=1	
-				eventInd+=1	
+				events[eventInd].triggered+=1
+				eventInd+=1
 
 			if(len(triggeredEvents)!=0):
 				popUp(triggeredEvents)
@@ -292,5 +292,3 @@ if __name__=="__main__":
 		else:
 			print('sleeping for {}....Out'.format(sleepInterval))
 			time.sleep(sleepInterval)
-			
-	

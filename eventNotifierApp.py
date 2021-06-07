@@ -1,5 +1,5 @@
-import tkinter as tk 
-from tkinter import ttk 
+import tkinter as tk
+from tkinter import ttk
 import webbrowser
 from tkinter.scrolledtext import ScrolledText
 import threading
@@ -18,7 +18,7 @@ from modules.leetcode import Leetcode
 LARGE_FONT = {"Helvetica",10}
 
 class MyButton(tk.Button):
-    
+
     def __init__(self, master, **kw):
         tk.Button.__init__(self,master=master,**kw)
         self.defaultBackground = self["background"]
@@ -39,7 +39,6 @@ class EventNotifierApp(tk.Tk):
 
 	def __init__(self):
 		tk.Tk.__init__(self)
-		tk.Tk.iconbitmap(self,default="images\\EventNotifier.ico")
 		tk.Tk.wm_title(self,"  Event Notifier App")
 
 		container = tk.Frame(self,bg="#0d0d0d",highlightbackground="lightgreen", highlightthickness=1,width=600, height=600)
@@ -65,7 +64,7 @@ class EventNotifierApp(tk.Tk):
 		hackerrankButton.pack(side="top",pady=10,fill='both')
 		settingsButton = MyButton(sideFrame,text="Settings",command=lambda:self.showFrame(SettingsPage),fg='#00e6e6',bg="#333333",activebackground="#595959",activeforeground="lightgreen", width=20,font=10)
 		settingsButton.pack(side="top",pady=10,fill='both')
-		
+
 		self.frames = {}
 
 		for F in (StartPage,
@@ -90,14 +89,14 @@ class StartPage(tk.Frame):
 
 	def __init__(self,parent,controller):
 		tk.Frame.__init__(self,parent,highlightbackground="lightblue", highlightcolor="lightblue", highlightthickness=1, width=720, height=500, bd= 0)
-		
+
 		image1 = tk.Label(self,width=850, height=650)
-		image1.EventNotifierImage = tk.PhotoImage(file="images\\EventNotifierImage.png")
+		image1.EventNotifierImage = tk.PhotoImage(file="./images/EventNotifierImage.png")
 		image1['image'] = image1.EventNotifierImage
 		image1.pack(side="left",expand=False)
-		
 
-		
+
+
 class CtfPage(tk.Frame):
 
 	def __init__(self,parent,controller):
@@ -141,20 +140,20 @@ class CtfPage(tk.Frame):
 			text.insert(tk.INSERT,"\n\t>  CTFtime url: ")
 			text.insert(tk.INSERT,ctftimeUrl,('link',ctftimeUrl))
 			text.insert(tk.INSERT,"\n")
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		ctfUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(ctfUrl)			
+		webbrowser.open_new(ctfUrl)
 
 class CodechefPage(tk.Frame):
 
@@ -189,23 +188,23 @@ class CodechefPage(tk.Frame):
 			text.insert(tk.INSERT,description)
 			text.insert(tk.INSERT,"Event url: ")
 			text.insert(tk.INSERT,event['url'],('link',event['url']))
-			
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		eventUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(eventUrl)			
+		webbrowser.open_new(eventUrl)
 
-	
+
 class HackerearthPage(tk.Frame):
 	def __init__(self,parent,controller):
 		hackerearthObj = Hackerearth()
@@ -239,20 +238,20 @@ class HackerearthPage(tk.Frame):
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,hackerearthUrl,('link',hackerearthUrl))
 			text.insert(tk.INSERT,"\n")
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		hackerearthUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(hackerearthUrl)			
+		webbrowser.open_new(hackerearthUrl)
 
 class HackerrankPage(tk.Frame):
 	def __init__(self,parent,controller):
@@ -286,20 +285,20 @@ class HackerrankPage(tk.Frame):
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,hackerrankUrl,('link',hackerrankUrl))
 			text.insert(tk.INSERT,"\n")
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		hackerrankUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(hackerrankUrl)			
+		webbrowser.open_new(hackerrankUrl)
 
 
 class CodeforcePage(tk.Frame):
@@ -340,20 +339,20 @@ class CodeforcePage(tk.Frame):
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,codeforceUrl,('link',codeforceUrl))
 			text.insert(tk.INSERT,"\n")
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		codeforceUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(codeforceUrl)			
+		webbrowser.open_new(codeforceUrl)
 
 
 
@@ -383,13 +382,13 @@ class SettingsPage(tk.Frame):
 		self.beforeIntervaltext.pack(side="left",padx=10)
 		label2 = tk.Label(beforeInvervalFrame,text=" Seconds ",bg="#1a1a1a",fg="#00e6e6",font=LARGE_FONT)
 		label2.pack(side="left",padx=10)
-		
+
 		labelNotify = tk.Label(container,text=">>>>>>      Notifications from Sites      <<<<<<",bg="#1a1a1a",fg="#00e6e6",font=20)
 		labelNotify.pack(side="top",fill="x",ipady=10)
-		
+
 		ctftimeFrame = tk.Frame(container,bg="#1a1a1a")
 		ctftimeFrame.pack(side="top",fill="both")
-		self.ctftimeCheck = tk.IntVar()		
+		self.ctftimeCheck = tk.IntVar()
 		self.ctftimeBox = tk.Checkbutton(ctftimeFrame,bg="#1a1a1a",variable=self.ctftimeCheck)
 		if parameters['ctftime'] == 1:
 			self.ctftimeBox.select()
@@ -397,7 +396,7 @@ class SettingsPage(tk.Frame):
 
 		ctftimeLabel = tk.Label(ctftimeFrame,text=" CTFtime",bg="#1a1a1a",fg="#00e6e6",font=LARGE_FONT)
 		ctftimeLabel.pack(side="left",padx=5)
-		
+
 		hackerearthFrame = tk.Frame(container,bg="#1a1a1a")
 		hackerearthFrame.pack(side="top",fill="both")
 		self.hackerearthCheck = tk.IntVar()
@@ -454,8 +453,8 @@ class SettingsPage(tk.Frame):
 
 
 		self.infolabel = tk.Label(self,text="",bg="#333333",relief="groove",font=LARGE_FONT)
-		
-		
+
+
 	def saveSettings(self):
 		parameters = {}
 		parameters['ctftime'] = self.ctftimeCheck.get()
@@ -480,7 +479,7 @@ class SettingsPage(tk.Frame):
 	def saveParameters(self,parameters):
 		with open("config/beforeEventNotifyInterval.conf",'w') as fp:
 			fp.write(str(parameters['beforeEventNotifyInterval']))
-		with open("config/notificationSettings.conf",'w') as fp: 
+		with open("config/notificationSettings.conf",'w') as fp:
 			fp.write(str(parameters['ctftime'])+"\n")
 			fp.write(str(parameters['hackerearth'])+"\n")
 			fp.write(str(parameters['hackerrank'])+"\n")
@@ -488,12 +487,12 @@ class SettingsPage(tk.Frame):
 			fp.write(str(parameters['codeforce'])+"\n")
 			fp.write(str(parameters['leetcode'])+"\n")
 
-		
+
 	def getParameters(self):
 		parameters = {}
 		with open("config/beforeEventNotifyInterval.conf",'r') as fp:
 			parameters['beforeEventNotifyInterval'] = int(fp.read())  #seconds
-		with open("config/notificationSettings.conf",'r') as fp: 
+		with open("config/notificationSettings.conf",'r') as fp:
 			parameters['ctftime'] = int(fp.readline().strip())
 			parameters['hackerearth'] = int(fp.readline().strip())
 			parameters['hackerrank'] = int(fp.readline().strip())
@@ -520,30 +519,30 @@ def showAnimation():
 	"""
 
 
-	colors = ['0b','02','03','0b','04','06','09','0a','0b','0c','0d','0e']
+	#colors = ['0b','02','03','0b','04','06','09','0a','0b','0c','0d','0e']
 	curColor =  0
 	for ind in range(len(logo)):
 		if logo[ind]=='\n':
-			os.system("color "+str(colors[curColor%len(colors)]))
+			#os.system("color "+str(colors[curColor%len(colors)]))
 			curColor+=1
 		print(logo[ind],end="")
 		time.sleep(0.007)
-	time.sleep(1)
-	os.system('color 0d')
+	#time.sleep(1)
+	#os.system('color 0d')
 	print("                          ---> By  TEJESHREDDY MEKA.")
 	time.sleep(1)
-	os.system('color 06')
+	#os.system('color 06')
 	print('\n\n\t[+] Launching Event Notifier Application.....')
 	time.sleep(1)
-	os.system('color 0a')
+	#os.system('color 0a')
 	print('\n\t[+] Retriving data from websites......')
 	time.sleep(1)
-	os.system('color 0d')
+	#os.system('color 0d')
 	print("\n\t[+] We will remind you if any competetion  starts.")
 	time.sleep(1)
-	os.system('color 0e')
+	#os.system('color 0e')
 	print('\n\t[+] Have a Nice day.............')
-	os.system('color 0b')
+	#os.system('color 0b')
 
 class LeetcodePage(tk.Frame):
 	def __init__(self,parent,controller):
@@ -571,36 +570,36 @@ class LeetcodePage(tk.Frame):
 			text.insert(tk.INSERT,name,'lightblue')
 			startTime =  event['start']
 			startTime = "\n\t>  " + "Starts: "+ startTime
-			endTime = "\n\t>  " + "Finish: " + event['finish'] 
+			endTime = "\n\t>  " + "Finish: " + event['finish']
 			description = startTime + endTime + "\n\t>  "
 			text.insert(tk.INSERT,description)
 			leetcodeUrl = event['url']
 			text.insert(tk.INSERT,"\n\t>  Event url: ")
 			text.insert(tk.INSERT,leetcodeUrl,('link',leetcodeUrl))
 			text.insert(tk.INSERT,"\n")
-		
-		text.tag_config('link',foreground="#3385ff")	
+
+		text.tag_config('link',foreground="#3385ff")
 		text.tag_bind('link','<Button-1>',self.openLink)
 		text.tag_config('lightblue',foreground="#00e6e6")
 		text.tag_config('red',foreground="red")
 		text.tag_config('white',foreground="white")
 		text.tag_config('orange',foreground="#ff6600")
-		
-		
+
+
 		text.config(state=tk.DISABLED)
 
 	def openLink(self,event):
 		leetcodeUrl = event.widget.tag_names(tk.CURRENT)[1]
-		webbrowser.open_new(leetcodeUrl)			
+		webbrowser.open_new(leetcodeUrl)
 
 
 if __name__=="__main__":
-	
+
 
 	thread = threading.Thread(target=showAnimation)
 	thread.start()
 
-	
+
 	app = EventNotifierApp()
 	app.mainloop()
 	thread.join()
